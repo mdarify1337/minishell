@@ -6,7 +6,7 @@
 /*   By: mdarify <mdarify@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/03/02 13:26:41 by mdarify           #+#    #+#             */
-/*   Updated: 2023/03/07 13:34:23 by mdarify          ###   ########.fr       */
+/*   Updated: 2023/03/12 13:20:04 by mdarify          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -14,18 +14,15 @@
 
 int	fbuilt_check_command(t_cmd_node *info, t_env *env)
 {
-	char	*key;
-
-	key = env->first->key;
 	
 	if (!ft_strcmp(info->cmd_[0], "unset"))
 	{
-		unset_cmd(env, key);
+		exec_unset(info, &env);
 		return (1);
 	}
 	else if (!ft_strcmp(info->cmd_[0], "export"))
 	{
-		export_cmd(env, info->cmd_);
+		exec_export(info, &env);
 		return (1);
 	}
 	else if (!ft_strcmp(info->cmd_[0], "echo"))
@@ -38,6 +35,7 @@ int	fbuilt_check_command(t_cmd_node *info, t_env *env)
 
 int	fcheck_execv_builtin(t_cmd_node *info, t_env *env)
 {
+	
 	if (info->cmd_)
 	{
 		if (!ft_strcmp(info->cmd_[0], "pwd"))
@@ -47,7 +45,7 @@ int	fcheck_execv_builtin(t_cmd_node *info, t_env *env)
 		}
 		else if (!ft_strcmp(info->cmd_[0], "exit"))
 		{
-			ft_exit(info->cmd_);
+			builtin_exit(info->cmd_);
 			return (1);
 		}
 		else if (!ft_strcmp(info->cmd_[0], "cd"))

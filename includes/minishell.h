@@ -6,7 +6,7 @@
 /*   By: mdarify <mdarify@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/02/01 19:10:22 by mmounaji          #+#    #+#             */
-/*   Updated: 2023/03/09 18:09:31 by mdarify          ###   ########.fr       */
+/*   Updated: 2023/03/12 19:02:43 by mdarify          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -15,8 +15,8 @@
 
 # include <stdio.h>
 # include <unistd.h>
-#include <fcntl.h>
- #include <dirent.h>
+# include <fcntl.h>
+# include <dirent.h>
 # include <stdlib.h>
 # include <string.h>
 # include <signal.h>
@@ -47,7 +47,6 @@ typedef enum e_token
 	DREDIR_OUT,
 }			t_oken;
 
-// struct for env
 typedef struct s_env_node
 {
 	char				*key;
@@ -78,28 +77,25 @@ typedef struct s_list
 	t_element	*last;
 }				t_list;
 
-// typedef struct s_direc
-// {
-// 	int					fd;
-// 	char		*file;
-// }				t_direc;
-
-// struct for commands
-/*
-
-typedef struct s_cmd
+typedef struct e_cmd_node
 {
-	int				i_fd;
-	int				o_fd;
-	char			*cmd_line;
-	char			*f_error;
-	char			**cmd_option;
-	char			**files;
-	struct s_cmd	*next;
-}					t_cmd;
-*/
+	char				*args;
+	char				**cmd_;
+	int					io_in;
+	int					io_out;
+	int					fcd;
+	char				*ferror;
+	struct e_cmd_node	*previous;
+	struct e_cmd_node	*next;
+}				t_cmd_node;
 
-typedef struct s_norm
+typedef struct e_command
+{
+	t_cmd_node	*first;
+	t_cmd_node	*last;
+}				t_command;
+
+typedef struct s_helper
 {
 	int				count;
 	int				(*fd)[2];
@@ -109,50 +105,17 @@ typedef struct s_norm
 	int				end;
 	int				proc;
 	int				*pid;
-}					t_mounaji;
+}					t_helper;
 
-typedef struct e_cmd_node
-{
-	char				*args;
-	char				**cmd_;
-	int					fcd;
-	int					io_in;
-	int					io_out;
-	char				*ferror;
-	struct e_cmd_node	*next;
-}				t_cmd_node;
-
-typedef	struct s_darify
+typedef struct s_main
 {
 	int			exit_status;
 	t_env		*fenv;
 	t_cmd_node	*f_command;
-}	t_darify;
-t_darify		fcode;
-// MINISHELL: ------->execution
-char	**env_arr(t_env_node *env);
-void	pwd(void);
-void	ft_echo(char **s);
-void	ft_exit(char **ex);
-int		env_cmd(t_env	*env);
-int		unset_cmd(t_env *env, char *key);	
-int		fcommand_built(t_cmd_node *command);
-int		fcalcule_size(t_cmd_node *command);
-void	export_cmd(t_env	*env, char **arg);
-void    ft_execution_command(t_cmd_node   *command, t_env *env);
-void	flinked_execution_pipex(t_cmd_node *shell, t_env *env);
-void	flinked_send_error(int l, char	*command);
-void	fcd_command_line(char **paths, t_env *env);
-void	flinked_execution_command(t_cmd_node *command, t_env *env);
-void	fexecute_command(t_cmd_node	*minishell, char	**path, char **env);
-void	fchild_command_execution(t_cmd_node *data, t_env *env, t_mounaji *val);
-int		fbuilt_check_command(t_cmd_node *info, t_env  *env);
-int		fcheck_execv_builtin(t_cmd_node *info, t_env   *env);
+}				t_main;
 
-// MINISHELL: ------->parsing
-
+t_main	fcode;
 void		minishell(char **env);
-void		ft_cmdadd_back(t_cmd_node **lst, t_cmd_node *new);
 t_list		*init_tokens(t_list *list);
 int			get_word(t_list *tokens, char *str, enum e_state state);
 t_element	*ft_lstnew(char *content, int len, enum e_token type, \
@@ -175,6 +138,7 @@ int			tokenize_redir(t_list *tokens, char *str, int i,\
 enum e_state *state);
 int			get_env_var(t_list *tokens, char *str, enum e_state state);
 int			is_alphanum(int c);
+void		main_program(t_command *node, t_env *env);
 void		ft_expand(t_list **lst, t_env *env);
 int			check_syntax(t_list *lst);
 int			is_closed_quote(t_element *elm);
@@ -183,31 +147,60 @@ int			ft_strchr(char *s, char c);
 int			is_redirection(t_element *elm);
 size_t		ft_strlen(const char *s);
 char		*ft_substr(char *s, int start, int len);
-char		*ft_strjoin(char const *s1, char const *s2);
+char		*ft_strjoin(char *s1, char *s2);
 char		*ft_strdup(char *str);
 t_env		*ft_init_env(char **env);
 t_env_node	*env_new(char *env);
 void		add_env(t_env **env_list, t_env_node *node);
-int			delete_node_by_key(t_env_node *head, char *key);
+int			delete_node_by_key(t_env *head, char *key);
 void		insert_to_tail(t_env_node **tail, t_env_node *node);
 t_env_node	*search_by_key(t_env_node *head, char *key);
 int			unset_cmd(t_env *env, char *key);
-t_cmd_node	*parse_command(t_list **list);
+t_command	*parse_command(t_list **list);
+void		export_cmd(t_env	*env, char *arg);
 char		*ft_realloc(char *old, char *new);
+void		ft_cmdadd_back(t_command **list, t_cmd_node *new);
 void		update_redirection(t_cmd_node *cmd, t_element *elm);
 int			is_pipe(t_element *elm);
+int			env_cmd(t_env	*env);
 int			ft_lstsize(t_env_node *lst);	
 void		ft_split_args(t_cmd_node **args);
 int			check_key(char *key);
 int			execute_here_doc(t_list **list);
 char		*ft_itoa(int n);
 int			ft_strncmp(const char *s1, const char *s2, size_t n);
+char		*ft_strjoin_free(char *s1, char *s2);
 void		init_signals(void);
-void		ft_cmd_cleaner(t_cmd_node *node);
+void		ft_cmd_cleaner(t_cmd_node **node);
 void		free_2d_array(char **ar);
+char		**convert_array(t_env *env);
 void		ft_env_cleaner(t_env_node *lst);
 void		env_free(t_env_node *lst);
 void		ft_lexer_cleaner(t_list *lst);
 void		ft_parsing_cleaner(t_list *lst, t_cmd_node *node, t_env *env);
-
+void		exec_export(t_cmd_node *cmd, t_env **env);
+void		exec_unset(t_cmd_node *cmd, t_env **env);
+// MINISHELL: ------->execution
+void	sig_handler(int sig);
+int			ft_isdigit(int c);
+void		ft_putendl_fd(char *s, int fd);
+int			builtin_exit(char **cmd);
+char		**env_arr(t_env_node *env);
+void		pwd(void);
+void		ft_echo(char **s);
+void		ft_exit(char **ex);
+int			fcommand_built(t_cmd_node *command);
+int			fcalcule_size(t_cmd_node *command);
+void		ft_execution_command(t_cmd_node *command, t_env *env);
+void		flinked_execution_pipex(t_cmd_node *shell, t_env *env);
+void		flinked_send_error(int l, char	*command);
+void		fcd_command_line(char **paths, t_env *env);
+void		flinked_execution_command(t_cmd_node *command, t_env *env);
+void	fexecute_command(t_cmd_node	*minishell, t_env	*env);
+void		fchild_command_execution(t_cmd_node *data, t_env *env, t_helper *val);
+int			fbuilt_check_command(t_cmd_node *info, t_env  *env);
+int			fcheck_execv_builtin(t_cmd_node *info, t_env   *env);
+void	ft_putstr_fd(char *s, int fd);
+void    fprint_ecode(char    *s, int fd, int fxcode);
+void	ft_parsing_cleaner(t_list *lst, t_cmd_node *node, t_env *env);
 #endif

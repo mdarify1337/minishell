@@ -1,12 +1,12 @@
 /* ************************************************************************** */
 /*                                                                            */
 /*                                                        :::      ::::::::   */
-/*   clean.c                                            :+:      :+:    :+:   */
+/*   parsing_cleaner.c                                  :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
 /*   By: mdarify <mdarify@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/03/03 14:25:44 by mmounaji          #+#    #+#             */
-/*   Updated: 2023/03/04 16:46:35 by mdarify          ###   ########.fr       */
+/*   Updated: 2023/03/12 19:06:35 by mdarify          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -26,6 +26,7 @@ void	ft_lexer_cleaner(t_list *lst)
 		free(elm);
 		elm = ptr;
 	}
+	free(lst);
 }
 
 void	ft_env_cleaner(t_env_node *lst)
@@ -45,41 +46,59 @@ void	ft_env_cleaner(t_env_node *lst)
 	}
 }
 
-void	free_2d_array(char **ar)
+void	free_2d_array(char **arg)
 {
-	char	*tmp;
+	int	i;
 
-	tmp = *ar;
-	while (*ar)
+	i = 0;
+	while (arg[i])
+		free(arg[i++]);
+	free(arg);
+}
+void	ft_cmd_cleaner(t_cmd_node **cmd)
+{
+	t_cmd_node *tmp;
+	int			i;
+
+	while (*cmd)
 	{
-		ar++;
-		free(tmp);
-		tmp = *ar;
+		i = 0;
+		tmp = (*cmd)->next;
+		while ((*cmd) && (*cmd)->cmd_[i])
+		{
+			free((*cmd)->cmd_[i]);
+			i++;
+		}
+		free((*cmd)->cmd_);
+		free((*cmd)->args);
+		free(*cmd);
+		*cmd = tmp;	
 	}
-	free(*ar);
 }
 
-void	ft_cmd_cleaner(t_cmd_node *node)
-{
-	t_cmd_node	*ptr;
-	t_cmd_node	*elm;
+// void	ft_cmd_cleaner(t_cmd_node *node)
+// {
+// 	t_cmd_node	*ptr;
+// 	t_cmd_node	*elm;
 
-	ptr = node;
-	elm = ptr;
-	while (ptr)
-	{
-		ptr = ptr->next;
-		free(elm->args);
-		free_2d_array(elm->cmd_);
-		free(elm);
-		elm = ptr;
-	}
-	free(elm);
-}
+// 	ptr = node;
+// 	elm = ptr;
+// 	while (ptr)
+// 	{
+// 		ptr = ptr->next;
+// 		free(elm->args);
+// 	free
+// 		free(elm);
+// 		elm = ptr;
+// 	}
+// 	free(elm);
+// }
 
 void	ft_parsing_cleaner(t_list *lst, t_cmd_node *node, t_env *env)
 {
-	ft_cmd_cleaner(node);
+	ft_cmd_cleaner(&node);
+	// (void)node;
+	(void)env;
 	ft_lexer_cleaner(lst);
-	ft_env_cleaner(env->first);
+	// ft_env_cleaner(env->first);
 }

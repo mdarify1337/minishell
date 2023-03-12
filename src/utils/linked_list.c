@@ -6,7 +6,7 @@
 /*   By: mmounaji <mmounaji@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/02/05 18:13:54 by mmounaji          #+#    #+#             */
-/*   Updated: 2023/03/01 21:23:01 by mmounaji         ###   ########.fr       */
+/*   Updated: 2023/03/07 19:17:35 by mmounaji         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -87,4 +87,3 @@ void	ft_lstadd_back(t_list **list, t_element *new)
 	}
 	(*list)->last = new;
 }
-//switching from simple to double list at env struct

@@ -6,7 +6,7 @@
 /*   By: mdarify <mdarify@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/02/20 12:07:44 by mmounaji          #+#    #+#             */
-/*   Updated: 2023/03/06 20:52:00 by mdarify          ###   ########.fr       */
+/*   Updated: 2023/03/12 10:16:44 by mdarify          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -40,16 +40,6 @@ int	ft_strchr(char *s, char c)
 	return (-1);
 }
 
-// int	ft_strcmp(char *s1, char *s2)
-// {
-// 	size_t	i;
-
-// 	i = 0;
-// 	while (s1[i] == s2[i] && s1[i] && s2[i])
-// 		i++;
-// 	return ((unsigned char)s1[i] - (unsigned char)s2[i]);
-// }
-
 int	ft_strcmp(char *s1, char *s2)
 {
 	if (!s1 || !s2)
@@ -80,7 +70,31 @@ char	*ft_strdup(char *str)
 	return (str2);
 }
 
-char	*ft_strjoin(char const *s1, char const *s2)
+char	*ft_strjoin(char *s1, char *s2)
+{
+	char	*resulttab;
+	size_t	size;
+	size_t	i;
+	size_t	j;
+
+	if (!s1 || !s2)
+		return (NULL);
+	size = ft_strlen(s1) + ft_strlen(s2);
+	resulttab = malloc(sizeof(char) * (size + 1));
+	if (!resulttab)
+		return (NULL);
+	i = 0;
+	j = 0;
+	while (s1[j])
+		resulttab[i++] = s1[j++];
+	j = 0;
+	while (s2[j])
+		resulttab[i++] = s2[j++];
+	resulttab[i] = '\0';
+	return (resulttab);
+}
+
+char	*ft_strjoin_free(char *s1, char *s2)
 {
 	char	*resulttab;
 	size_t	size;
@@ -99,5 +113,15 @@ char	*ft_strjoin(char const *s1, char const *s2)
 	while (s2[j])
 		resulttab[i++] = s2[j++];
 	resulttab[i] = '\0';
+	free(s1);
 	return (resulttab);
+}
+
+void	ft_putendl_fd(char *s, int fd)
+{
+	int	i;
+
+	i = 0;
+	ft_putstr_fd(s, fd);
+	write(fd, "\n", 1);
 }

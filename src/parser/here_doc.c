@@ -6,7 +6,7 @@
 /*   By: mdarify <mdarify@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/02/27 19:51:51 by mmounaji          #+#    #+#             */
-/*   Updated: 2023/03/07 13:28:31 by mdarify          ###   ########.fr       */
+/*   Updated: 2023/03/12 19:15:50 by mdarify          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -42,19 +42,20 @@ void	here_doc(t_element *node)
 	char	*name;
 
 	len = ft_strlen(node->content);
-	name = ft_strjoin("/private/tmp/", ft_assign_fname(14));
+	name = ft_strjoin("/private/tmp/", ft_assign_fname(14)); // free  ft_assign....
 	fd = open(name, O_CREAT | O_RDWR, 777);
 	if (fd < 0)
 		perror("bad file descriptor");
 	while (1)
 	{
-		buf = readline("\033[0;34m here_doc> ");
+		buf = readline(">");
 		if (buf == NULL)
 			break ;
 		if (!ft_strncmp(buf, node->content, len) && \
 		ft_strlen(buf) == (size_t)len)
 			break ;
-		write(fd, ft_strjoin(buf, "\n"), ft_strlen(buf));
+		write(fd, buf, ft_strlen(buf));// free the ft_strjoin allocation
+		write(fd, "\n", 1);
 		free(buf);
 	}
 	close(fd);

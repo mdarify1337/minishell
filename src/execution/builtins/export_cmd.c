@@ -6,7 +6,7 @@
 /*   By: mdarify <mdarify@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/02/18 16:47:05 by mmounaji          #+#    #+#             */
-/*   Updated: 2023/03/04 21:32:03 by mdarify          ###   ########.fr       */
+/*   Updated: 2023/03/12 13:12:00 by mdarify          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -74,29 +74,49 @@ void	print_env_sorted(t_env *env)
 	}
 }
 
-void	export_cmd(t_env	*env, char **arg)
+void	export_cmd(t_env	*env, char *arg)
 {
-	t_env_node	*node_;
 	t_env_node	*node;
 	int			i;
+	t_env_node	*node_;
 
+	if (!env->first)
+		return ;
 	node = env->first;
-	i = ft_strchr(arg[2], '=');
-	if (!arg[2])
-		print_env_sorted(env);
-	else if (!arg[2] || !ft_is_alpha(arg[2][0]))
-		perror("minishell : export : `%s` not a valid identifier");
-	else if (i != -1 && search_by_key(node, ft_substr(arg[2], 0, i)))
+	i = ft_strchr(arg, '=');
+	if (!arg)
 	{
-		node_ = search_by_key(node, ft_substr(arg[2], 0, i));
-		if (node_ && node_->value != NULL)
+		print_env_sorted(env);
+		return ;
+	}
+	else if (!arg || !ft_is_alpha(arg[0]))
+		printf("minishell : export : `%s` not a valid identifier", arg);
+	else if (i != -1 && search_by_key(node, ft_substr(arg, 0, i)) != NULL)
+	{
+		node_ = search_by_key(node, ft_substr(arg, 0, i));
+		if (node_)
 		{
 			free(node_->value);
-			node_->value = ft_substr(arg[2], i + 1, ft_strlen(arg[2]) - i);
+			node_->value = ft_substr(arg, i + 1, ft_strlen(arg) - i);
 		}
 	}
-	else if (i == -1 && !search_by_key(node, arg[2]))
-		insert_to_tail(&env->last, env_new(arg[2]));
-	else
-		insert_to_tail(&env->last, env_new(arg[2]));
+	else if (search_by_key(node, arg) == NULL)
+		insert_to_tail(&env->last, env_new(arg));
+}
+
+void	exec_export(t_cmd_node *cmd, t_env **env)
+{
+	int	i;
+
+	i = 1;
+	if (cmd->cmd_[i] == NULL)
+	{
+		export_cmd(*env, NULL);
+		return ;
+	}
+	while (cmd->cmd_[i])
+	{
+		export_cmd(*env, cmd->cmd_[i]);
+		i++;
+	}
 }
