@@ -6,7 +6,7 @@
 /*   By: mdarify <mdarify@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/03/02 13:27:03 by mdarify           #+#    #+#             */
-/*   Updated: 2023/03/12 18:38:06 by mdarify          ###   ########.fr       */
+/*   Updated: 2023/03/14 13:50:20 by mdarify          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -34,8 +34,6 @@ void	fchild_command_execution2(t_cmd_node *data, t_env *env, t_helper *val)
 
 	node = env->first;
 	l = 0;
-	// signal(SIGQUIT, SIG_DFL);
-	// signal(SIGINT, SIG_DFL);
 	if (data->io_in == -1 || data->io_out == -1)
 	{
 		perror("MINISHELL: ERROR2 ---> ");
@@ -43,8 +41,11 @@ void	fchild_command_execution2(t_cmd_node *data, t_env *env, t_helper *val)
 	}
 	if (data->io_out > 2)
 	{
-		close(val->fd[val->i][0]);
-		close(val->fd[val->i][1]);
+		if (val->i < val->count)
+		{
+			close(val->fd[val->i][0]);
+			close(val->fd[val->i][1]);
+		}
 		dup2(data->io_out, 1);
 	}
 	else if (val->i != val->count)
@@ -57,8 +58,11 @@ void	fchild_command_execution2(t_cmd_node *data, t_env *env, t_helper *val)
 	{
 		close(val->fd[val->i - 1][0]);
 		close(val->fd[val->i - 1][1]);
-		close(val->fd[val->i][0]);
-		close(val->fd[val->i][1]);
+		if (val->i < val->count)
+		{
+			close(val->fd[val->i][0]);
+			close(val->fd[val->i][1]);
+		}
 		dup2(data->io_in, 0);
 	}
 	else if (val && val->i > 0)
@@ -68,7 +72,7 @@ void	fchild_command_execution2(t_cmd_node *data, t_env *env, t_helper *val)
 		close(val->fd[val->i - 1][0]);
 	}
 	if (fcheck_execv_builtin(data, env))
-		exit(fcode.f_command->fcd);
+		exit(fcode.exit_status);
 	while (node)
 	{
 		if (!ft_strcmp(node->key, "PATH"))
@@ -90,20 +94,30 @@ void	fpclose(t_helper *minishell)
 		close(minishell->fd[minishell->i - 1][0]);
 		close(minishell->fd[minishell->i - 1][1]);
 	}
-	else if (minishell->i == minishell->count)
-	{
-		close(minishell->fd[minishell->i][0]);
-		close(minishell->fd[minishell->i][1]);
-	}
+	// if (minishell->i == minishell->count)
+	// {
+	// 	close(minishell->fd[minishell->i - 1][0]);
+	// 	close(minishell->fd[minishell->i - 1][1]);
+	// }
 }
 
 void	fchild_pipe_execution(t_cmd_node **command, t_helper *val, t_env *env)
 {
 	if ((*command)->cmd_ && (*command)->cmd_[0])
 	{
+		if ((*command)->io_in == -1 || (*command)->io_out == -1)
+		{
+			write(2, "minishell .>>>>>: No such file or directory\n", 38);
+			fcode.exit_status = 1;
+			exit(1);
+		}
 		val->pid[val->proc] = fork();
 		if (val->pid[val->proc] == 0)
+		{
+			signal(SIGQUIT, SIG_DFL);
+			signal(SIGINT, &sig_handler);
 			fchild_command_execution2(*(command), env, val);
+		}
 		(val->proc)++;
 	}
 	fpclose(val);
@@ -125,12 +139,15 @@ void	fwait_command(t_helper *minishell)
 		waitpid(minishell->pid[l], &minishell->status, 0);
 		l++;
 	}
-	if (minishell->status == 2)
+	if (l == SIGINT)
 		fcode.exit_status = 130;
-	else if (minishell->status == 3)
+	else if (l == SIGQUIT)
+	{
+		printf("Quit: 3\n");
 		fcode.exit_status = 131;
-	else
-		fcode.exit_status = WEXITSTATUS(minishell->status);
+	}
+	else if (WIFEXITED(l))
+		fcode.exit_status = WEXITSTATUS(l);
 	free(minishell->pid);
 }
 
@@ -150,9 +167,8 @@ void	flinked_execution_pipex(t_cmd_node *shell, t_env *env)
 		fchild_pipe_execution(&shell, value, env);
 	}
 	fwait_command(value);
-	// fpclose(value);
 	free(value->fd);
-	free (value);
+	free(value);
 }
 void	fprint_ecode(char *s, int fd, int fxcode)
 {

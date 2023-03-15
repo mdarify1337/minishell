@@ -6,7 +6,7 @@
 /*   By: mdarify <mdarify@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/03/03 16:21:55 by mdarify           #+#    #+#             */
-/*   Updated: 2023/03/12 14:22:43 by mdarify          ###   ########.fr       */
+/*   Updated: 2023/03/14 19:03:21 by mdarify          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -46,10 +46,10 @@ static int	is_numeric(const char *s)
 	return (is_numeric);
 }
 
-long double	ft_atoi_exit(char *str)
+long long int	ft_atoi_exit(char *str)
 {
-	int			sign;
-	long double	nbr;
+	int		sign;
+	long	nbr;
 
 	sign = 1;
 	nbr = 0;
@@ -61,10 +61,24 @@ long double	ft_atoi_exit(char *str)
 			sign *= -1;
 		str++;
 	}
+	// if (ft_strlen(str) > 19)
+	// {
+	// 	ft_putstr_fd("MINISHELL: exit: ", STDERR_FILENO);
+	// 	ft_putendl_fd(": numeric argument required", STDERR_FILENO);
+	// 	fcode.exit_status = 255;
+	// 	exit(fcode.exit_status);
+	// }
 	while (ft_isdigit(*str))
 	{
 		nbr = (nbr * 10) + (*str - '0');
 		str++;
+	}
+	if (nbr < 0)
+	{
+		ft_putstr_fd("MINISHELL: exit: ", STDERR_FILENO);
+		ft_putendl_fd(": numeric argument required", STDERR_FILENO);
+		fcode.exit_status = 255;
+		exit(fcode.exit_status);
 	}
 	return (sign * nbr);
 }
@@ -76,12 +90,13 @@ int	builtin_exit(char **cmd)
 	ft_putendl_fd("exit", STDOUT_FILENO);
 	size = ft_mlen(cmd);
 	if (size == 1)
+	{
 		exit(fcode.exit_status);
+	}
 	fcode.exit_status = ft_atoi_exit(cmd[1]);
 	if (size == 2)
 	{
-		if (!is_numeric(cmd[1]) || fcode.exit_status > 2147483647
-			|| fcode.exit_status < -2147483648)
+		if (!is_numeric(cmd[1]) || ft_atoi_exit(cmd[1]) > 9223372036854775807)
 		{
 			ft_putstr_fd("MINISHELL: exit: ", STDERR_FILENO);
 			ft_putstr_fd(cmd[1], STDERR_FILENO);

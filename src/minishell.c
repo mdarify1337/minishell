@@ -6,57 +6,30 @@
 /*   By: mdarify <mdarify@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/02/04 21:07:24 by mmounaji          #+#    #+#             */
-/*   Updated: 2023/03/12 19:07:19 by mdarify          ###   ########.fr       */
+/*   Updated: 2023/03/15 12:06:44 by mdarify          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "../includes/minishell.h"
+#include <termios.h>
+void remove_ctlc()
+{
+	struct termios t;
 
-// void	print_element(t_list *list)
-// {
-// 	t_element	*node;
+	tcgetattr(0, &t);
+	t.c_lflag &= ~ECHOCTL;
+	tcsetattr(0, 0, &t);
+}
 
-// 	node = list->first;
-// 	while (node)
-// 	{
-// 	printf("--------------------------------------------------\n");
-// 	printf("content:%s    ", node->content);
-// 	printf(", len:    %i", node->len);
-// 	printf(", state:    %i", node->state);
-// 	printf(", token:    %i\n", node->type);
-// 	printf("--------------------------------------------------\n");
-// 		node = node->next;
-// 	}
-// }
-
-// void	print_parsing(t_cmd_node *cmd)
-// {
-// 	t_cmd_node	*node;
-// 	node = cmd;
-// 	int i = 0;
-// 	while (node)
-// 	{
-// 		printf("command : %s\n", node->args);
-// 		printf("arguments :");
-// 		while (node->cmd_[i])
-// 			printf("-%s-",node->cmd_[i++]);
-// 		printf("\nio out : %d\n", node->io_out);
-// 		printf("io in : %d\n", node->io_in);
-// 		printf("------------------------------------------------\n");
-// 		node = node->next;
-// 		i = 0;
-// 	}
-// }
 int	ft_readline(char **line)
 {
-	signal(SIGINT, SIG_IGN);
+	signal(SIGINT, &sig_handler);
 	*line = readline("minishell$> ");
 	signal(SIGINT, SIG_IGN);
-	if (!*line)
+	if (!(*line))
 	{
-		printf("exit\n");
-		fcode.exit_status = 0;
-		exit(fcode.exit_status);
+		write(2, "exit\n", 5);
+		exit (fcode.exit_status);
 	}
 	if (ft_strcmp(*line, "") == -1 || ft_strisspace(*line))
 		return (1);
@@ -65,9 +38,9 @@ int	ft_readline(char **line)
 	return (0);
 }
 
-void free_cmd(t_cmd_node **cmd)
+void	free_cmd(t_cmd_node **cmd)
 {
-	t_cmd_node *tmp;
+	t_cmd_node	*tmp;
 	int			i;
 
 	while (*cmd)
@@ -82,7 +55,7 @@ void free_cmd(t_cmd_node **cmd)
 		free((*cmd)->cmd_);
 		free((*cmd)->args);
 		free(*cmd);
-		*cmd = tmp;	
+		*cmd = tmp;
 	}
 }
 
@@ -96,6 +69,8 @@ void	minishell(char **envv)
 	line = NULL;
 	env = ft_init_env(envv);
 	signal(SIGQUIT, SIG_IGN);
+	signal(SIGINT, &sig_handler);
+	remove_ctlc();
 	while (1)
 	{
 		if (ft_readline(&line))
@@ -112,6 +87,5 @@ void	minishell(char **envv)
 		ft_execution_command(cmd->first, env);
 		ft_parsing_cleaner(element, cmd->first, env);
 		free(cmd);
-		// free_cmd(&cmd->first);
 	}
 }

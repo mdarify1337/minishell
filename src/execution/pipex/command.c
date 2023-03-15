@@ -6,7 +6,7 @@
 /*   By: mdarify <mdarify@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/03/02 13:27:37 by mdarify           #+#    #+#             */
-/*   Updated: 2023/03/12 16:12:21 by mdarify          ###   ########.fr       */
+/*   Updated: 2023/03/13 19:11:15 by mdarify          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -26,7 +26,6 @@ int	flen_linked(char *s)
 
 void	fprint_link_error(char *error, int l, int l2)
 {
-	//error = ("MINISHELL: ERROR 3--->: ---- No such file or directory ----\n");
 	if (error)
 	{
 		write(2, error, flen_linked(error));
@@ -88,6 +87,8 @@ char	**env_arr(t_env_node *env)
 	return (s);
 }
 
+
+
 void	fchild_command_execution(t_cmd_node *data, t_env *env, t_helper *val)
 {
 	t_env_node	*node;
@@ -97,11 +98,11 @@ void	fchild_command_execution(t_cmd_node *data, t_env *env, t_helper *val)
 	l = fork();
 	if (l == 0)
 	{
-		// signal(SIGQUIT, SIG_DFL);
-		// signal(SIGINT, SIG_DFL);
+		signal(SIGQUIT, SIG_DFL);
+		signal(SIGINT, &sig_handler);
 		if (data->io_in == -1 || data->io_out == -1)
 		{
-			perror("MINISHELL: ERROR1 --->     ");
+			write(2, "minishell : No such file or directory\n", 39);
 				fcode.exit_status = 1;
 			exit(fcode.exit_status);
 		}
@@ -134,6 +135,7 @@ void	 flinked_execution_command(t_cmd_node *command, t_env *env)
 {
 	int	l;
 
+	
 	if (fbuilt_command_right(command, env))
 		return ;
 	if (command->cmd_ && command->args)
@@ -144,16 +146,14 @@ void	 flinked_execution_command(t_cmd_node *command, t_env *env)
 		close(command->io_out);
 	fcode.exit_status = 0;
 	wait(&l);
-	if (l == 2)
-	{
-		printf("control c");
+	if (l == SIGINT)
 		fcode.exit_status = 130;
-	}
-	else if (l == 3)
+	else if (l == SIGQUIT)
 	{
-		printf("control /");
+		printf("Quit: 3\n");
 		fcode.exit_status = 131;
 	}
+		
 	else if (WIFEXITED(l))
 		fcode.exit_status = WEXITSTATUS(l);
 }

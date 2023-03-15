@@ -6,7 +6,7 @@
 /*   By: mdarify <mdarify@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/02/17 18:37:34 by mmounaji          #+#    #+#             */
-/*   Updated: 2023/03/11 20:30:14 by mdarify          ###   ########.fr       */
+/*   Updated: 2023/03/15 12:06:17 by mdarify          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -30,6 +30,8 @@ void	update_redirection(t_cmd_node *cmd, t_element *elm)
 	tmp = elm;
 	while (tmp && tmp->type != WORD && tmp->type != ENV)
 		tmp = tmp->next;
+	if (!tmp)
+		return ;
 	if (cmd->io_in != -1 && (elm->type == REDIR_IN || elm->type == HERE_DOC))
 		cmd->io_in = open(tmp->content, O_RDONLY, 0644);
 	else if (cmd->io_in != -1 && elm->type == REDIR_OUT)
@@ -71,3 +73,4 @@ void	ft_cmdadd_back(t_command **list, t_cmd_node *new)
 	}
 	(*list)->last = new;
 }
+

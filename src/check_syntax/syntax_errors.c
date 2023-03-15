@@ -6,7 +6,7 @@
 /*   By: mdarify <mdarify@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/02/09 12:55:04 by mmounaji          #+#    #+#             */
-/*   Updated: 2023/03/12 17:56:15 by mdarify          ###   ########.fr       */
+/*   Updated: 2023/03/13 12:12:11 by mdarify          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -69,7 +69,7 @@ int	check_syntax(t_list *lst)
 	{
 		perror("minishell: detected unclosed quotes");
 		fcode.exit_status = 0;
-		exit(fcode.exit_status);
+		// exit(fcode.exit_status);
 	}	
 	while (elem)
 	{
@@ -77,14 +77,14 @@ int	check_syntax(t_list *lst)
 		&& check_pipe(elem) == 0 )
 		{
 			perror("minishell: syntax error near unexpected token |");
-			fcode.exit_status = 0;
-			exit(fcode.exit_status);
+			fcode.exit_status = 258;
+			// exit(fcode.exit_status);
 		}	
 		else if (is_redirection(elem) == 1 && redir_error(elem) == 1)
 		{
 			perror("minishell: syntax error near unexpected token >");
 			fcode.exit_status = 1;
-			exit(fcode.exit_status);
+			// exit(fcode.exit_status);
 		}
 		elem = elem->next;
 	}

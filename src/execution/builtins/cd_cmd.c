@@ -6,7 +6,7 @@
 /*   By: mdarify <mdarify@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/03/02 16:24:04 by mdarify           #+#    #+#             */
-/*   Updated: 2023/03/12 14:48:53 by mdarify          ###   ########.fr       */
+/*   Updated: 2023/03/14 09:58:30 by mdarify          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -34,5 +34,4 @@ void	fcd_command_line(char **paths, t_env *env)
 	else
 		ret = chdir((const char *) paths[1]);
 	getcwd(buf, 256);
-	printf("%s\n", buf);
 }

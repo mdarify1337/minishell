@@ -6,7 +6,7 @@
 /*   By: mdarify <mdarify@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/03/02 16:23:48 by mdarify           #+#    #+#             */
-/*   Updated: 2023/03/12 08:12:43 by mdarify          ###   ########.fr       */
+/*   Updated: 2023/03/14 18:47:13 by mdarify          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -48,9 +48,9 @@ void	ft_echo(char **s)
 	while (s[++i])
 	{
 		if (ft_strcmp(s[i], "$?") == 0)
-			printf("%d ", fcode.exit_status);
+			printf("%lld", fcode.exit_status);
 		else
-			printf("%s ", s[i]);
+			printf("%s", s[i]);
 	}
 	if (!flag)
 		printf("\n");

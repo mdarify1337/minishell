@@ -6,7 +6,7 @@
 /*   By: mdarify <mdarify@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/03/01 19:05:23 by mmounaji          #+#    #+#             */
-/*   Updated: 2023/03/12 15:18:11 by mdarify          ###   ########.fr       */
+/*   Updated: 2023/03/12 20:23:33 by mdarify          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -23,9 +23,3 @@ void	sig_handler(int sig)
 		rl_redisplay();
 	}
 }
-
-// void	init_signals(void)
-// {
-// 	signal(SIGQUIT, SIG_IGN);
-// 	signal(SIGINT, sig_handler);
-// }

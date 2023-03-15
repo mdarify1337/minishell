@@ -6,7 +6,7 @@
 /*   By: mdarify <mdarify@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/03/03 14:25:44 by mmounaji          #+#    #+#             */
-/*   Updated: 2023/03/12 19:06:35 by mdarify          ###   ########.fr       */
+/*   Updated: 2023/03/13 10:34:01 by mdarify          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -96,9 +96,7 @@ void	ft_cmd_cleaner(t_cmd_node **cmd)
 
 void	ft_parsing_cleaner(t_list *lst, t_cmd_node *node, t_env *env)
 {
-	ft_cmd_cleaner(&node);
-	// (void)node;
 	(void)env;
+	ft_cmd_cleaner(&node);
 	ft_lexer_cleaner(lst);
-	// ft_env_cleaner(env->first);
 }

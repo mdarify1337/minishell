@@ -6,7 +6,7 @@
 /*   By: mdarify <mdarify@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/03/02 13:26:55 by mdarify           #+#    #+#             */
-/*   Updated: 2023/03/12 16:09:01 by mdarify          ###   ########.fr       */
+/*   Updated: 2023/03/13 21:03:58 by mdarify          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -92,7 +92,7 @@ char	*get_cmd(char **paths, char *cmd, t_env *env)
 			return (ft_strdup(cmd));
 		else
 		{
-			fprint_ecode("No such file or directoryyyyy\n", 2,
+			fprint_ecode("No such file or directory\n", 2,
 					fcode.exit_status);
 			fcode.exit_status = 127;
 			exit(fcode.exit_status);
@@ -112,7 +112,6 @@ char	*get_cmd(char **paths, char *cmd, t_env *env)
 		tmp = paths;
 		while (*tmp != NULL)
 		{
-			// printf("%s\n", *tmp);
 			command = st_join(*tmp, '/', cmd);
 			tmp++;
 			if (access(command, X_OK) == 0)
@@ -162,7 +161,9 @@ void	fexecute_command(t_cmd_node *minishell, t_env *env)
 	{
 		if (execve(minishell->args, minishell->cmd_, convert_array(env)) == -1)
 		{
-			perror("MINISHELL: ---> ERROR1 :---> ::::::");
+			fprint_ecode("minishell : command not found \n", 2, fcode.exit_status);
+			fcode.exit_status = 127;
+			exit(fcode.exit_status);
 		}
 	}
 }

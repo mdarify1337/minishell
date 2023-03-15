@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   env.c                                              :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: mmounaji <mmounaji@student.42.fr>          +#+  +:+       +#+        */
+/*   By: mdarify <mdarify@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/02/12 13:55:59 by mmounaji          #+#    #+#             */
-/*   Updated: 2023/02/25 21:33:31 by mmounaji         ###   ########.fr       */
+/*   Updated: 2023/03/14 19:18:00 by mdarify          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -35,8 +35,8 @@ t_env_node	*env_new(char *env)
 	}
 	if (!check_key(key))
 	{
-		printf("export: `%s': not a valid identifier", env);
-		exit (1);
+		printf("export: `%s': not a valid identifier\n", env);
+		fcode.exit_status = 1;
 	}
 	lst->key = key;
 	lst->value = value;

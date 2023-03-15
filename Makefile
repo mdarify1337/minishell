@@ -1,7 +1,7 @@
 NAME		= minishell
 	
 CC		= cc
-CFLAGS	= -Wall -Wextra -Werror -g3 #-fsanitize=address
+CFLAGS	= -Wall -Wextra -Werror #-g3 -fsanitize=address
 RM		= rm -rf
 
 UTILS		= $(addprefix utils/, ft_split linked_list utils utils1 ft_itoa)

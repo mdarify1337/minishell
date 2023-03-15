@@ -6,7 +6,7 @@
 /*   By: mdarify <mdarify@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/02/01 19:10:22 by mmounaji          #+#    #+#             */
-/*   Updated: 2023/03/12 19:02:43 by mdarify          ###   ########.fr       */
+/*   Updated: 2023/03/15 12:06:52 by mdarify          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -109,7 +109,7 @@ typedef struct s_helper
 
 typedef struct s_main
 {
-	int			exit_status;
+	long long	exit_status;
 	t_env		*fenv;
 	t_cmd_node	*f_command;
 }				t_main;

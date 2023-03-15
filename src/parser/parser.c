@@ -6,7 +6,7 @@
 /*   By: mdarify <mdarify@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/02/15 17:56:49 by mmounaji          #+#    #+#             */
-/*   Updated: 2023/03/12 18:54:01 by mdarify          ###   ########.fr       */
+/*   Updated: 2023/03/15 11:58:46 by mdarify          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -53,6 +53,42 @@ void	ft_split_args(t_cmd_node **args)
 	}
 }
 
+// t_command	*parse_command(t_list **list)
+// {
+// 	t_command		*cmd;
+// 	t_cmd_node		*tmp;
+// 	t_element		*elm;
+// 	int				i;
+
+// 	if (!list)
+// 		return (NULL);
+// 	elm = (*list)->first;
+// 	cmd = calloc(1, sizeof(t_command));
+// 	tmp = cmd_new();
+// 	while (elm)
+// 	{
+// 		if (is_redirection(elm))
+// 		{
+// 			update_redirection(tmp, elm);
+// 			while (elm && elm->type != WORD && elm->type != ENV)
+// 				elm = elm->next;
+// 		}
+// 		else if (elm->type == PIPE_LINE && elm->state == GENERAL)
+// 		{
+// 			ft_cmdadd_back(&cmd, tmp);
+// 			tmp = cmd_new();
+// 		}
+// 		else if ((elm->type != QOUTE && elm->type != DOUBLE_QUOTE) || \
+// 		(elm->state == IN_DQUOTE || elm->state == IN_QUOTE))
+// 			tmp->args = ft_realloc(tmp->args, elm->content);
+// 		elm = elm->next;
+// 		i = 1;
+// 	}
+// 	ft_cmdadd_back(&cmd, tmp);
+// 	return (cmd);
+// }
+
+
 t_command	*parse_command(t_list **list)
 {
 	t_command		*cmd;
@@ -73,15 +109,14 @@ t_command	*parse_command(t_list **list)
 			while (elm && elm->type != WORD && elm->type != ENV)
 				elm = elm->next;
 		}
-		else if (elm->type == PIPE_LINE)
+		else if (elm->type == PIPE_LINE && elm->state == GENERAL)
 		{
 			ft_cmdadd_back(&cmd, tmp);
 			tmp = cmd_new();
 		}
-		else if ((elm->type != QOUTE && elm->type != DOUBLE_QUOTE))
-		{
-			tmp->args = ft_realloc(tmp->args, elm->content);
-		}
+		else if ((elm->type != QOUTE && elm->type != DOUBLE_QUOTE) || \
+		(elm->state == IN_DQUOTE || elm->state == IN_QUOTE))
+			tmp->args = ft_realloc(tmp->args, elm->content, elm->next);
 		elm = elm->next;
 		i = 1;
 	}
