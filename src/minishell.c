@@ -6,15 +6,15 @@
 /*   By: mdarify <mdarify@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/02/04 21:07:24 by mmounaji          #+#    #+#             */
-/*   Updated: 2023/03/15 12:06:44 by mdarify          ###   ########.fr       */
+/*   Updated: 2023/03/17 10:00:01 by mdarify          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "../includes/minishell.h"
-#include <termios.h>
-void remove_ctlc()
+
+void	remove_ctlc(void)
 {
-	struct termios t;
+	struct termios	t;
 
 	tcgetattr(0, &t);
 	t.c_lflag &= ~ECHOCTL;
@@ -29,7 +29,7 @@ int	ft_readline(char **line)
 	if (!(*line))
 	{
 		write(2, "exit\n", 5);
-		exit (fcode.exit_status);
+		exit (g_fcode.exit_status);
 	}
 	if (ft_strcmp(*line, "") == -1 || ft_strisspace(*line))
 		return (1);
@@ -59,7 +59,14 @@ void	free_cmd(t_cmd_node **cmd)
 	}
 }
 
-void	minishell(char **envv)
+void	fminishell_signal(void)
+{
+	signal(SIGQUIT, SIG_IGN);
+	signal(SIGINT, &sig_handler);
+	remove_ctlc();
+}
+
+void	minishell(char **envp)
 {
 	char		*line;
 	t_list		*element;
@@ -67,10 +74,8 @@ void	minishell(char **envv)
 	t_command	*cmd;
 
 	line = NULL;
-	env = ft_init_env(envv);
-	signal(SIGQUIT, SIG_IGN);
-	signal(SIGINT, &sig_handler);
-	remove_ctlc();
+	env = ft_init_env(envp);
+	fminishell_signal();
 	while (1)
 	{
 		if (ft_readline(&line))

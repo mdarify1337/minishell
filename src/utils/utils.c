@@ -6,7 +6,7 @@
 /*   By: mdarify <mdarify@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/02/20 12:06:05 by mmounaji          #+#    #+#             */
-/*   Updated: 2023/03/12 10:15:44 by mdarify          ###   ########.fr       */
+/*   Updated: 2023/03/16 08:34:15 by mdarify          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -57,18 +57,6 @@ int	ft_isspace(char c)
 {
 	if (c == ' ' || c == '\t' || c == '\v'
 		|| c == '\r' || c == '\f' || c == '\n')
-		return (1);
-	return (0);
-}
-
-int	ft_is_alpha(char c)
-{
-	return ((c >= 'a' && c <= 'z') || (c >= 'A' && c <= 'Z'));
-}
-
-int	ft_isdigit(int c)
-{
-	if (c >= '0' && c <= '9')
 		return (1);
 	return (0);
 }

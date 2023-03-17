@@ -6,38 +6,11 @@
 /*   By: mdarify <mdarify@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/02/18 16:47:05 by mmounaji          #+#    #+#             */
-/*   Updated: 2023/03/15 12:06:03 by mdarify          ###   ########.fr       */
+/*   Updated: 2023/03/17 09:50:20 by mdarify          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "../../../includes/minishell.h"
-
-int	find_spaces(char *str)
-{
-	int	i;
-
-	i = 0;
-	while (str[i] && str[i] != '=')
-	{
-		if (ft_isspace(str[i]))
-			return (0);
-		i++;
-	}
-	return (1);
-}
-
-void	ft_swap(t_env_node *n1, t_env_node *n2)
-{
-	char	*key;
-	char	*val;
-
-	key = n1->key;
-	val = n1->value;
-	n1->key = n2->key;
-	n1->value = n2->value;
-	n2->key = key;
-	n2->value = val;
-}
 
 void	ft_sort(t_env *env)
 {
@@ -58,12 +31,12 @@ void	ft_sort(t_env *env)
 
 void	print_env_sorted(t_env *env)
 {
-	t_env		*tmp;
 	t_env_node	*current;
 
-	tmp = env;
-	ft_sort(tmp);
-	current = tmp->first;
+	if (!env->first)
+		return ;
+	ft_sort(env);
+	current = env->first;
 	while (current)
 	{
 		printf("declare -x %s", current->key);
@@ -74,115 +47,22 @@ void	print_env_sorted(t_env *env)
 	}
 }
 
-char	*ft_strcat(char *pdf, char *s1, char *s2)
-{
-	int	l1;
-	int	l2;
-	int	l3;
-
-	l1 = 0;
-	l2 = 0;
-	l3 = 0;
-	while (s1[l2])
-	{
-		pdf[l1] = s1[l2];
-		l1++;
-		l2++;
-	}
-	while (s2[l3])
-	{
-		pdf[l1 + l3] = s2[l3];
-		l3++;
-	}
-	pdf[l1 + l3] = '\0';
-	return (pdf);
-}
-
-char	*ft_strjoin_keyvalue(char *s1, char *s2)
-{
-	char	*pdf;
-	int		l1;
-	int		l2;
-
-	if (!s2)
-		return (0);
-	if (!s1)
-	{
-		s1 = malloc(1);
-		*s1 = '\0';
-	}
-	l1 = ft_strlen(s1);
-	l2 = ft_strlen(s2) + 1;
-	pdf = malloc(l1 + l2);
-	if (!pdf)
-	{
-		free(s1);
-		return (NULL);
-	}
-	pdf = ft_strcat(pdf, s1, s2);
-	// free(s1);
-	return (s1);
-}
-void	export_join_plus(t_env *env, char *arg)
-{
-	t_env_node	*node;
-	t_env_node	*new_node;
-	int			l;
-
-	if (!env->first)
-		return ;
-	node = env->first;
-	l = ft_strchr(arg, '+');
-	if (!arg)
-	{
-		print_env_sorted(env);
-		fcode.exit_status = 0;
-	}
-	else if (!ft_is_alpha(arg[0]))
-	{
-		printf("minishell ---> 1: export : `%s` not a valid identifie\n", arg);
-		fcode.exit_status = 1;
-	}
-	else if (l != -1 && search_by_key(node, ft_substr(arg, 0, l)) != NULL)
-	{
-		if (arg[l + 1] == '=')
-		{
-			new_node = search_by_key(node, ft_substr(arg, 0, l));
-			if (new_node)
-			{
-				printf("%s\n", ft_substr(arg, 0, l + 2));
-				new_node->value = ft_strjoin(ft_strjoin(ft_substr(arg, 0, l), "="), new_node->value);
-				printf("%s\n", new_node->value);
-				
-				new_node->value = ft_strjoin(new_node->value, ft_substr(arg, l+ 2, ft_strlen(arg) - l));
-				printf("%s\n", new_node->value);
-			}
-		}
-	}
-	else if (search_by_key(node, arg) == NULL)
-		insert_to_tail(&env->last, env_new(arg));
-}
-
-void	export_cmd(t_env *env, char *arg)
+void	export_cmd(t_env	*env, char *arg)
 {
 	t_env_node	*node;
 	int			i;
 	t_env_node	*node_;
 
-	if (!env->first)
-		return ;
 	node = env->first;
 	i = ft_strchr(arg, '=');
-	if (ft_strchr(arg, '+'))
-		export_join_plus(env, arg);
-	else if (!arg)
-	{
+	if (!arg)
 		print_env_sorted(env);
-		fcode.exit_status = 1;
-	}
 	else if (!arg || !ft_is_alpha(arg[0]))
-		printf("minishell : export : `%s` not a valid identifier\n",
-				arg);
+		printf("minishell : export : `%s` not a valid identifier", arg);
+	else if (arg[i - 1] && arg[i - 1] == '+')
+		export_with_join(&env, arg, i, NULL);
+	else if (!node)
+		insert_to_tail(&env, env_new(arg));
 	else if (i != -1 && search_by_key(node, ft_substr(arg, 0, i)) != NULL)
 	{
 		node_ = search_by_key(node, ft_substr(arg, 0, i));
@@ -193,7 +73,7 @@ void	export_cmd(t_env *env, char *arg)
 		}
 	}
 	else if (search_by_key(node, arg) == NULL)
-		insert_to_tail(&env->last, env_new(arg));
+		insert_to_tail(&env, env_new(arg));
 }
 
 void	exec_export(t_cmd_node *cmd, t_env **env)

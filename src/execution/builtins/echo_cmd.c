@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   echo_cmd.c                                         :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: mdarify <mdarify@student.42.fr>            +#+  +:+       +#+        */
+/*   By: mmounaji <mmounaji@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/03/02 16:23:48 by mdarify           #+#    #+#             */
-/*   Updated: 2023/03/14 18:47:13 by mdarify          ###   ########.fr       */
+/*   Updated: 2023/03/16 21:38:15 by mmounaji         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -48,11 +48,11 @@ void	ft_echo(char **s)
 	while (s[++i])
 	{
 		if (ft_strcmp(s[i], "$?") == 0)
-			printf("%lld", fcode.exit_status);
+			printf("%lld", g_fcode.exit_status);
 		else
-			printf("%s", s[i]);
+			printf("%s ", s[i]);
 	}
 	if (!flag)
 		printf("\n");
-	fcode.exit_status = 0;
+	g_fcode.exit_status = 0;
 }

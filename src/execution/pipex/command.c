@@ -6,39 +6,15 @@
 /*   By: mdarify <mdarify@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/03/02 13:27:37 by mdarify           #+#    #+#             */
-/*   Updated: 2023/03/13 19:11:15 by mdarify          ###   ########.fr       */
+/*   Updated: 2023/03/16 16:18:21 by mdarify          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "../../../includes/minishell.h"
 
-int	flen_linked(char *s)
+int	fbuilt_command_right(t_cmd_node *info, t_env *env)
 {
-	int	l;
-
-	l = 0;
-	while (s[l])
-	{
-		l++;
-	}
-	return (l);
-}
-
-void	fprint_link_error(char *error, int l, int l2)
-{
-	if (error)
-	{
-		write(2, error, flen_linked(error));
-		write(2, "\n", 1);
-	}
-	fcode.exit_status = l2;
-	if (l)
-		exit(l2);
-}
-
-int	fbuilt_command_right(t_cmd_node *info, t_env	*env)
-{
-	int		fd;
+	int	fd;
 
 	if (fcommand_built(info))
 	{
@@ -61,33 +37,24 @@ int	fbuilt_command_right(t_cmd_node *info, t_env	*env)
 	return (0);
 }
 
-char	**env_arr(t_env_node *env)
+void	fcheck_valid_fd(t_cmd_node *fd, t_helper *duplicat)
 {
-	t_env_node	*tmp;
-	char		**s;
-	int			i;
-
-	i = 0;
-	tmp = env;
-	while (tmp)
+	if (fd->io_in == -1 || fd->io_out == -1)
 	{
-		tmp = tmp->next;
-		i++;
+		g_fcode.exit_status = 1;
+		exit(g_fcode.exit_status);
 	}
-	tmp = env;
-	s = malloc((i + 1) * sizeof(char *));
-	i = 0;
-	while (tmp)
-	{
-		s[i] = ft_strjoin(ft_strjoin(tmp->key, "="), tmp->value);
-		tmp = tmp->next;
-		i++;
-	}
-	s[i] = NULL;
-	return (s);
+	signal(SIGQUIT, SIG_DFL);
+	signal(SIGINT, &sig_handler);
+	if (fd->io_out > 2)
+		dup2(fd->io_out, 1);
+	else if (duplicat)
+		dup2(duplicat->fd[duplicat->i][1], 1);
+	if (fd->io_in > 2)
+		dup2(fd->io_in, 0);
+	else if (duplicat && duplicat->i != 0)
+		dup2(duplicat->fd[duplicat->i - 1][0], 0);
 }
-
-
 
 void	fchild_command_execution(t_cmd_node *data, t_env *env, t_helper *val)
 {
@@ -98,24 +65,9 @@ void	fchild_command_execution(t_cmd_node *data, t_env *env, t_helper *val)
 	l = fork();
 	if (l == 0)
 	{
-		signal(SIGQUIT, SIG_DFL);
-		signal(SIGINT, &sig_handler);
-		if (data->io_in == -1 || data->io_out == -1)
-		{
-			write(2, "minishell : No such file or directory\n", 39);
-				fcode.exit_status = 1;
-			exit(fcode.exit_status);
-		}
-		if (data->io_out > 2)
-			dup2(data->io_out, 1);
-		else if (val)
-			dup2(val->fd[val->i][1], 1);
-		if (data->io_in > 2)
-			dup2(data->io_in, 0);
-		else if (val && val->i != 0)
-			dup2(val->fd[val->i - 1][0], 0);
+		fcheck_valid_fd(data, val);
 		if (fcheck_execv_builtin(data, env))
-			exit(fcode.f_command->fcd);
+			exit(g_fcode.f_command->fcd);
 		while (node)
 		{
 			if (!ft_strcmp(node->key, "PATH"))
@@ -131,11 +83,10 @@ void	fchild_command_execution(t_cmd_node *data, t_env *env, t_helper *val)
 	}
 }
 
-void	 flinked_execution_command(t_cmd_node *command, t_env *env)
+void	flinked_execution_command(t_cmd_node *command, t_env *env)
 {
 	int	l;
 
-	
 	if (fbuilt_command_right(command, env))
 		return ;
 	if (command->cmd_ && command->args)
@@ -144,16 +95,15 @@ void	 flinked_execution_command(t_cmd_node *command, t_env *env)
 		close(command->io_in);
 	if (command->io_out > 2)
 		close(command->io_out);
-	fcode.exit_status = 0;
+	g_fcode.exit_status = 0;
 	wait(&l);
 	if (l == SIGINT)
-		fcode.exit_status = 130;
+		g_fcode.exit_status = 130;
 	else if (l == SIGQUIT)
 	{
 		printf("Quit: 3\n");
-		fcode.exit_status = 131;
+		g_fcode.exit_status = 131;
 	}
-		
 	else if (WIFEXITED(l))
-		fcode.exit_status = WEXITSTATUS(l);
+		g_fcode.exit_status = WEXITSTATUS(l);
 }

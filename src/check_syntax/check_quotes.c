@@ -6,13 +6,13 @@
 /*   By: mdarify <mdarify@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/02/10 17:44:57 by mmounaji          #+#    #+#             */
-/*   Updated: 2023/03/13 10:32:05 by mdarify          ###   ########.fr       */
+/*   Updated: 2023/03/16 11:56:52 by mdarify          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "../../includes/minishell.h"
 
-int	get_nbQuotes(t_list *lst, int flag)
+int	get_nbquotes(t_list *lst, int flag)
 {
 	t_element	*tmp;
 	int			i;
@@ -32,8 +32,8 @@ int	get_nbQuotes(t_list *lst, int flag)
 
 int	check_quotes(t_list	*lst)
 {
-	if (get_nbQuotes(lst, 0) % 2 != 0 || \
-	get_nbQuotes(lst, 1) % 2 != 0)
+	if (get_nbquotes(lst, 0) % 2 != 0 || \
+	get_nbquotes(lst, 1) % 2 != 0)
 		return (0);
 	return (1);
 }

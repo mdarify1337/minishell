@@ -6,7 +6,7 @@
 /*   By: mdarify <mdarify@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/02/12 13:56:09 by mmounaji          #+#    #+#             */
-/*   Updated: 2023/03/13 10:37:47 by mdarify          ###   ########.fr       */
+/*   Updated: 2023/03/15 16:57:41 by mdarify          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -52,4 +52,3 @@ char	*ft_substr(char *s, int start, int len)
 	res[j] = '\0';
 	return (res);
 }
-

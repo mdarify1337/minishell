@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   lexer_utils.c                                      :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: mmounaji <mmounaji@student.42.fr>          +#+  +:+       +#+        */
+/*   By: mdarify <mdarify@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/02/05 18:08:56 by mmounaji          #+#    #+#             */
-/*   Updated: 2023/03/03 14:32:19 by mmounaji         ###   ########.fr       */
+/*   Updated: 2023/03/16 12:03:58 by mdarify          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -23,7 +23,7 @@ int	get_word(t_list *tokens, char *str, enum e_state state)
 	return (i);
 }
 
-void	quotes_state(t_list *tokens, char *str, enum e_state *state, enum e_token  state2)
+void	quotes_state(t_list *tokens, char *str, enum e_state *state, enum e_token state2)
 {
 	enum e_state	e_state;
 	enum e_token	e_type;

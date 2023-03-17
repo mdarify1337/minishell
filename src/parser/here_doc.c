@@ -6,7 +6,7 @@
 /*   By: mdarify <mdarify@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/02/27 19:51:51 by mmounaji          #+#    #+#             */
-/*   Updated: 2023/03/15 12:06:14 by mdarify          ###   ########.fr       */
+/*   Updated: 2023/03/17 11:04:04 by mdarify          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -34,18 +34,19 @@ char	*ft_assign_fname(int length)
 	return (fname);
 }
 
-void	here_doc(t_element *node)
+void	sig_child(int status)
+{
+	(void)status;
+	printf("\n");
+	exit(EXIT_FAILURE);
+}
+
+void	here_doc_exec(int fd, t_element *node, int len)
 {
 	char	*buf;
-	int		fd;
-	int		len;
-	char	*name;
 
-	len = ft_strlen(node->content);
-	name = ft_strjoin("/private/tmp/", ft_assign_fname(14));
-	fd = open(name, O_CREAT | O_RDWR, 777);
-	if (fd < 0)
-		perror("bad file descriptor");
+	signal(SIGINT, &sig_child);
+	signal(SIGQUIT, SIG_IGN);
 	while (1)
 	{
 		buf = readline(">");
@@ -54,14 +55,37 @@ void	here_doc(t_element *node)
 		if (!ft_strncmp(buf, node->content, len) && \
 		ft_strlen(buf) == (size_t)len)
 			break ;
-		write(fd, ft_strjoin(buf, "\n"), ft_strlen(buf)+ 1);
+		write(fd, ft_strjoin(buf, "\n"), ft_strlen(buf) + 1);
 		free(buf);
 	}
 	close(fd);
 	free(buf);
+	exit(EXIT_SUCCESS);
+}
+
+int	here_doc(t_element *node)
+{
+	int		fd;
+	int		status;
+	char	*name;
+	int		pid;
+
+	name = ft_strjoin_free2("/private/tmp/", ft_assign_fname(14));
+	fd = open(name, O_CREAT | O_RDWR, 777);
+	if (fd < 0)
+		perror("bad file descriptor");
+	signal(SIGINT, SIG_IGN);
+	pid = fork();
+	if (pid == 0)
+		here_doc_exec(fd, node, ft_strlen(node->content));
+	waitpid(pid, &status, 0);
+	if (status != 0)
+		return (0);
+	close(fd);
 	free(node->content);
 	node->content = ft_strdup(name);
 	free(name);
+	return (1);
 }
 
 int	execute_here_doc(t_list **list)
@@ -71,16 +95,20 @@ int	execute_here_doc(t_list **list)
 
 	index = -1;
 	node = (*list)->first;
-	while (node && node->next)//change
+	while (node && node->next)
 	{
 		if (node->type == HERE_DOC && node->next->type != PIPE_LINE)
 		{
-			while (node && node->type != WORD && node->type != ENV)
+			while (node && node->type != WORD && node->type != ENV && node->type != WHITE_SPACE)
 				node = node->next;
-			if (node != NULL)
-				here_doc(node);
-		}	
-		node = node->next;
+			if (here_doc(node) == 0)
+			{
+				return (0);
+				break ;
+			}
+		}
+		if (node)
+			node = node->next;
 	}
 	return (index);
 }

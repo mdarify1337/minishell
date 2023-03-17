@@ -6,7 +6,7 @@
 /*   By: mmounaji <mmounaji@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/10/10 15:27:25 by mmounaji          #+#    #+#             */
-/*   Updated: 2023/03/10 11:00:40 by mmounaji         ###   ########.fr       */
+/*   Updated: 2023/03/16 21:07:20 by mmounaji         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -73,6 +73,8 @@ char	**ft_split(char const *s, char c)
 	char	**result;
 
 	i2 = 0;
+	if (!s)
+		return (NULL);
 	result = (char **)malloc(sizeof(char *) * (word_count(s, c) + 1));
 	if (result == NULL)
 		return (NULL);

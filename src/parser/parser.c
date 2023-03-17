@@ -6,7 +6,7 @@
 /*   By: mdarify <mdarify@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/02/15 17:56:49 by mmounaji          #+#    #+#             */
-/*   Updated: 2023/03/15 12:10:27 by mdarify          ###   ########.fr       */
+/*   Updated: 2023/03/17 10:26:13 by mdarify          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -45,7 +45,7 @@ void	ft_split_args(t_cmd_node **args)
 		if (cmd->args != NULL)
 		{
 			free(cmd->cmd_);
-			cmd->cmd_ = ft_split(cmd->args, ' ');
+			cmd->cmd_ = ft_split(cmd->args, '*');
 			free(cmd->args);
 			cmd->args = ft_strdup(cmd->cmd_[0]);
 		}
@@ -58,7 +58,6 @@ t_command	*parse_command(t_list **list)
 	t_command		*cmd;
 	t_cmd_node		*tmp;
 	t_element		*elm;
-	int				i;
 
 	if (!list)
 		return (NULL);
@@ -78,11 +77,24 @@ t_command	*parse_command(t_list **list)
 			ft_cmdadd_back(&cmd, tmp);
 			tmp = cmd_new();
 		}
-		else if ((elm->type != QOUTE && elm->type != DOUBLE_QUOTE) || \
-		(elm->state == IN_DQUOTE || elm->state == IN_QUOTE))
-			tmp->args = ft_realloc(tmp->args, elm->content);
-		elm = elm->next;
-		i = 1;
+		else if ((elm->type != QOUTE && elm->type != DOUBLE_QUOTE
+				&& elm->type != GEN_WS)
+			|| (elm->state == IN_DQUOTE || elm->state == IN_QUOTE))
+		{
+			if (elm->next && elm->next->type != GEN_WS)
+			{	
+				while (elm && elm->type != QOUTE && elm->type != DOUBLE_QUOTE
+					&& elm->type != GEN_WS)
+				{
+					tmp->args = ft_strjoin_free(tmp->args, elm->content);
+					elm = elm->next;
+				}
+			}
+			else
+				tmp->args = ft_realloc(tmp->args, elm->content, elm->next);
+		}
+		if (elm)
+			elm = elm->next;
 	}
 	ft_cmdadd_back(&cmd, tmp);
 	return (cmd);

@@ -3,59 +3,14 @@
 /*                                                        :::      ::::::::   */
 /*   linked.c                                           :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: mdarify <mdarify@student.42.fr>            +#+  +:+       +#+        */
+/*   By: mmounaji <mmounaji@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/03/02 13:26:55 by mdarify           #+#    #+#             */
-/*   Updated: 2023/03/13 21:03:58 by mdarify          ###   ########.fr       */
+/*   Updated: 2023/03/16 21:09:07 by mmounaji         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "../../../includes/minishell.h"
-
-void	ft_putstr_fd(char *s, int fd)
-{
-	int	i;
-
-	i = 0;
-	while (s[i] != '\0')
-	{
-		write(fd, &s[i], 1);
-		i++;
-	}
-}
-
-void	flinked_send_error(int l, char *command)
-{
-	if (l == 1)
-	{
-		ft_putstr_fd("MINISHELL: ERROR 3--->: ", 2);
-		ft_putstr_fd(command, 2);
-		ft_putstr_fd("----command not found-----\n", 2);
-		exit(127);
-	}
-	if (l == 2)
-	{
-		ft_putstr_fd("MINISHELL: ERROR 4--->: ", 2);
-		ft_putstr_fd(command, 2);
-		ft_putstr_fd("---- No such file or directory ----\n", 2);
-		exit(127);
-	}
-}
-
-int	fcalcule_size(t_cmd_node *command)
-{
-	t_cmd_node	*minishell;
-	int			l;
-
-	l = 0;
-	minishell = command;
-	while (minishell)
-	{
-		minishell = minishell->next;
-		l++;
-	}
-	return (l);
-}
 
 char	*st_join(char const *s1, char crt, char const *s2)
 {
@@ -80,33 +35,45 @@ char	*st_join(char const *s1, char crt, char const *s2)
 	return (str);
 }
 
+char	*check_command(char *command)
+{
+	if (access(command, F_OK | X_OK) == 0)
+		return (ft_strdup(command));
+	else
+	{
+		fprint_ecode("minishell : No such file or directory\n", 2,
+			g_fcode.exit_status);
+		g_fcode.exit_status = 127;
+		exit(g_fcode.exit_status);
+	}
+}
+
+char	*check_command2(char *cmd, t_env *env)
+{
+	t_env_node	*pwd;
+	char		*command;
+
+	pwd = search_by_key(env->first, "PWD");
+	command = st_join(pwd->value, '/', cmd);
+	if (access(command, X_OK) == 0)
+		return (command);
+	else
+	{
+		printf("minishell : %s: Command Not Found\n", cmd);
+		g_fcode.exit_status = 127;
+		exit(g_fcode.exit_status);
+	}
+}
+
 char	*get_cmd(char **paths, char *cmd, t_env *env)
 {
 	char		**tmp;
 	char		*command;
-	t_env_node	*pwd;
 
 	if (cmd[0] == '/')
-	{
-		if (access(cmd, F_OK) == 0)
-			return (ft_strdup(cmd));
-		else
-		{
-			fprint_ecode("No such file or directory\n", 2,
-					fcode.exit_status);
-			fcode.exit_status = 127;
-			exit(fcode.exit_status);
-		}
-	}
+		check_command(cmd);
 	else if (cmd[0] == '.')
-	{
-		pwd = search_by_key(env->first, "PWD");
-		command = st_join(pwd->value, '/', cmd);
-		if (access(command, X_OK) == 0)
-			return (command);
-		else
-			printf("minishell: %s: No such file or directory\n", cmd);
-	}
+		check_command2(cmd, env);
 	else
 	{
 		tmp = paths;
@@ -137,8 +104,8 @@ int	find_path(t_cmd_node **cmd, t_env *env)
 	abs_path = get_cmd(ft_split(node->value, ':'), (*cmd)->args, env);
 	if (abs_path == NULL)
 	{
-		fprint_ecode("MINISHELL : command not found---->\n", 2, 127);
-		fcode.exit_status = 127;
+		fprint_ecode("minishell : command not found\n", 2, 127);
+		g_fcode.exit_status = 127;
 		exit(127);
 	}
 	else if (abs_path)
@@ -148,34 +115,5 @@ int	find_path(t_cmd_node **cmd, t_env *env)
 		free(abs_path);
 		return (1);
 	}
-	return (fcode.exit_status);
-}
-
-void	fexecute_command(t_cmd_node *minishell, t_env *env)
-{
-	if ((find_path(&minishell, env)) == 1)
-	{
-		fcode.exit_status = 127;
-	}
-	if (minishell->cmd_[0])
-	{
-		if (execve(minishell->args, minishell->cmd_, convert_array(env)) == -1)
-		{
-			fprint_ecode("minishell : command not found \n", 2, fcode.exit_status);
-			fcode.exit_status = 127;
-			exit(fcode.exit_status);
-		}
-	}
-}
-// number of commands
-
-void	ft_execution_command(t_cmd_node *command, t_env *env)
-{
-	if (command)
-	{
-		if (fcalcule_size(command) == 1)
-			flinked_execution_command(command, env);
-		else if (fcalcule_size(command) > 1)
-			flinked_execution_pipex(command, env);
-	}
+	return (g_fcode.exit_status);
 }

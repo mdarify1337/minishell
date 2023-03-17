@@ -6,7 +6,7 @@
 /*   By: mdarify <mdarify@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/03/03 14:25:44 by mmounaji          #+#    #+#             */
-/*   Updated: 2023/03/13 10:34:01 by mdarify          ###   ########.fr       */
+/*   Updated: 2023/03/16 11:53:28 by mdarify          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -55,9 +55,10 @@ void	free_2d_array(char **arg)
 		free(arg[i++]);
 	free(arg);
 }
+
 void	ft_cmd_cleaner(t_cmd_node **cmd)
 {
-	t_cmd_node *tmp;
+	t_cmd_node	*tmp;
 	int			i;
 
 	while (*cmd)
@@ -72,27 +73,9 @@ void	ft_cmd_cleaner(t_cmd_node **cmd)
 		free((*cmd)->cmd_);
 		free((*cmd)->args);
 		free(*cmd);
-		*cmd = tmp;	
+		*cmd = tmp;
 	}
 }
-
-// void	ft_cmd_cleaner(t_cmd_node *node)
-// {
-// 	t_cmd_node	*ptr;
-// 	t_cmd_node	*elm;
-
-// 	ptr = node;
-// 	elm = ptr;
-// 	while (ptr)
-// 	{
-// 		ptr = ptr->next;
-// 		free(elm->args);
-// 	free
-// 		free(elm);
-// 		elm = ptr;
-// 	}
-// 	free(elm);
-// }
 
 void	ft_parsing_cleaner(t_list *lst, t_cmd_node *node, t_env *env)
 {

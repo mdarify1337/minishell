@@ -6,21 +6,11 @@
 /*   By: mdarify <mdarify@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/02/20 12:07:44 by mmounaji          #+#    #+#             */
-/*   Updated: 2023/03/12 10:16:44 by mdarify          ###   ########.fr       */
+/*   Updated: 2023/03/17 10:20:47 by mdarify          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "../../includes/minishell.h"
-
-size_t	ft_strlen(const char *s)
-{
-	size_t	i;
-
-	i = 0;
-	while (s[i])
-		i++;
-	return (i);
-}
 
 int	ft_strchr(char *s, char c)
 {
@@ -61,6 +51,8 @@ char	*ft_strdup(char *str)
 	int		i;
 
 	i = -1;
+	if (!str)
+		return (NULL);
 	str2 = malloc(sizeof(char) * (ft_strlen(str) + 1));
 	if (!str2)
 		return (NULL);
@@ -68,60 +60,4 @@ char	*ft_strdup(char *str)
 		str2[i] = str[i];
 	str2[i] = '\0';
 	return (str2);
-}
-
-char	*ft_strjoin(char *s1, char *s2)
-{
-	char	*resulttab;
-	size_t	size;
-	size_t	i;
-	size_t	j;
-
-	if (!s1 || !s2)
-		return (NULL);
-	size = ft_strlen(s1) + ft_strlen(s2);
-	resulttab = malloc(sizeof(char) * (size + 1));
-	if (!resulttab)
-		return (NULL);
-	i = 0;
-	j = 0;
-	while (s1[j])
-		resulttab[i++] = s1[j++];
-	j = 0;
-	while (s2[j])
-		resulttab[i++] = s2[j++];
-	resulttab[i] = '\0';
-	return (resulttab);
-}
-
-char	*ft_strjoin_free(char *s1, char *s2)
-{
-	char	*resulttab;
-	size_t	size;
-	size_t	i;
-	size_t	j;
-
-	size = ft_strlen(s1) + ft_strlen(s2);
-	resulttab = malloc(sizeof(char) * (size + 1));
-	if (!resulttab)
-		return (NULL);
-	i = 0;
-	j = 0;
-	while (s1[j])
-		resulttab[i++] = s1[j++];
-	j = 0;
-	while (s2[j])
-		resulttab[i++] = s2[j++];
-	resulttab[i] = '\0';
-	free(s1);
-	return (resulttab);
-}
-
-void	ft_putendl_fd(char *s, int fd)
-{
-	int	i;
-
-	i = 0;
-	ft_putstr_fd(s, fd);
-	write(fd, "\n", 1);
 }

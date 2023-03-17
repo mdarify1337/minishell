@@ -6,7 +6,7 @@
 /*   By: mdarify <mdarify@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/02/09 12:55:04 by mmounaji          #+#    #+#             */
-/*   Updated: 2023/03/13 12:12:11 by mdarify          ###   ########.fr       */
+/*   Updated: 2023/03/16 16:46:20 by mdarify          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -24,7 +24,7 @@ int	is_redirection(t_element *elm)
 
 t_element	*skip_space(t_element *elm, int flag)
 {
-	while (elm != NULL && elm->type == WHITE_SPACE)
+	while (elm != NULL && (elm->type == WHITE_SPACE || elm->type == GEN_WS))
 	{
 		if (flag == 1)
 			elm = elm->next;
@@ -68,23 +68,20 @@ int	check_syntax(t_list *lst)
 	if (check_quotes(lst) == 0)
 	{
 		perror("minishell: detected unclosed quotes");
-		fcode.exit_status = 0;
-		// exit(fcode.exit_status);
+		g_fcode.exit_status = 0;
 	}	
 	while (elem)
 	{
 		if (elem->type == PIPE_LINE && elem->state == GENERAL \
-		&& check_pipe(elem) == 0 )
+			&& check_pipe(elem) == 0)
 		{
 			perror("minishell: syntax error near unexpected token |");
-			fcode.exit_status = 258;
-			// exit(fcode.exit_status);
+			g_fcode.exit_status = 258;
 		}	
 		else if (is_redirection(elem) == 1 && redir_error(elem) == 1)
 		{
 			perror("minishell: syntax error near unexpected token >");
-			fcode.exit_status = 1;
-			// exit(fcode.exit_status);
+			g_fcode.exit_status = 1;
 		}
 		elem = elem->next;
 	}

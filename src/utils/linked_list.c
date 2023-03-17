@@ -3,34 +3,14 @@
 /*                                                        :::      ::::::::   */
 /*   linked_list.c                                      :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: mmounaji <mmounaji@student.42.fr>          +#+  +:+       +#+        */
+/*   By: mdarify <mdarify@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/02/05 18:13:54 by mmounaji          #+#    #+#             */
-/*   Updated: 2023/03/07 19:17:35 by mmounaji         ###   ########.fr       */
+/*   Updated: 2023/03/16 08:55:06 by mdarify          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "../../includes/minishell.h"
-
-char	*ft_strndup(char *s1, int n)
-{
-	char	*copy;
-	size_t	s1_len;
-	int		i;
-
-	i = 0;
-	s1_len = strlen(s1);
-	copy = malloc(sizeof(char) * (s1_len + 1));
-	if (!copy)
-		return (NULL);
-	while (s1[i] && i < n)
-	{
-		copy[i] = s1[i];
-		i++;
-	}
-	copy[i] = '\0';
-	return (copy);
-}
 
 int	ft_lstsize(t_env_node *lst)
 {
