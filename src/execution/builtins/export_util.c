@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   export_util.c                                      :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: mdarify <mdarify@student.42.fr>            +#+  +:+       +#+        */
+/*   By: mmounaji <mmounaji@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/03/16 16:41:57 by mdarify           #+#    #+#             */
-/*   Updated: 2023/03/17 10:00:25 by mdarify          ###   ########.fr       */
+/*   Updated: 2023/03/17 20:06:41 by mmounaji         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -62,17 +62,23 @@ char	*ft_remove_char(char	*str, char c)
 void	export_with_join(t_env **env, char *arg, int i, t_env_node *node_)
 {
 	t_env_node	*node;
+	char		*tmp;
 
+	tmp = ft_remove_char(arg, '+');
 	node = (*env)->first;
 	if (!node)
-		insert_to_tail(env, env_new(ft_remove_char(arg, '+')));
-	else if (i != -1 && search_by_key(node, ft_substr(arg, 0, i - 1)) != NULL)
+		insert_to_tail(env, env_new(tmp));
+	else if (i != -1 && search_by_key(node, ft_substr(tmp, 0, i - 1)) != NULL)
 	{
-		node_ = search_by_key(node, ft_substr(arg, 0, i - 1));
+		node_ = search_by_key(node, ft_substr(tmp, 0, i - 1));
 		if (node_)
-			node_->value = ft_strjoin_free(node_->value, \
+		{
+			free(node_->value);
+			node_->value = ft_strjoin_free2(node_->value, \
 			ft_substr(arg, i + 1, ft_strlen(arg) - i));
+		}	
 	}
-	else if (search_by_key(node, arg) == NULL)
-		insert_to_tail(env, env_new(ft_remove_char(arg, '+')));
+	else if (search_by_key(node, ft_strdup(tmp)) == NULL)
+		insert_to_tail(env, env_new(tmp));
+	free(tmp);
 }

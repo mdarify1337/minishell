@@ -3,14 +3,21 @@
 /*                                                        :::      ::::::::   */
 /*   unset_cmd.c                                        :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: mdarify <mdarify@student.42.fr>            +#+  +:+       +#+        */
+/*   By: mmounaji <mmounaji@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/02/19 18:03:31 by mmounaji          #+#    #+#             */
-/*   Updated: 2023/03/12 13:19:39 by mdarify          ###   ########.fr       */
+/*   Updated: 2023/03/17 18:00:46 by mmounaji         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "../../../includes/minishell.h"
+
+void	free_env_node(t_env_node *e)
+{
+	free(e->key);
+	free(e->value);
+	free(e);
+}
 
 int	delete_node_by_key(t_env *head, char *key)
 {
@@ -23,7 +30,7 @@ int	delete_node_by_key(t_env *head, char *key)
 	{
 		head->first = tmp->next;
 		head->first->previous = NULL;
-		free(tmp);
+		free_env_node(tmp);
 		return (0);
 	}
 	while (tmp && ft_strcmp(tmp->key, key) != 0)
@@ -32,7 +39,7 @@ int	delete_node_by_key(t_env *head, char *key)
 	{
 		tmp->previous->next = tmp->next;
 		tmp->next->previous = tmp->previous;
-		free(tmp);
+		free_env_node(tmp);
 		return (1);
 	}
 	return (0);

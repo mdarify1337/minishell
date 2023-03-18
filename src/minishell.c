@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   minishell.c                                        :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: mdarify <mdarify@student.42.fr>            +#+  +:+       +#+        */
+/*   By: mmounaji <mmounaji@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/02/04 21:07:24 by mmounaji          #+#    #+#             */
-/*   Updated: 2023/03/17 10:00:01 by mdarify          ###   ########.fr       */
+/*   Updated: 2023/03/17 21:07:50 by mmounaji         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -83,14 +83,14 @@ void	minishell(char **envp)
 			free(line);
 			continue ;
 		}
-		element = lexer(line);
+		element = lexer(line, 0);
 		execute_here_doc(&element);
-		check_syntax(element);
+		if (check_syntax(element) == 0)
+			continue ;
 		ft_expand(&element, env);
 		cmd = parse_command(&element);
 		ft_split_args(&cmd->first);
 		ft_execution_command(cmd->first, env);
-		ft_parsing_cleaner(element, cmd->first, env);
-		free(cmd);
+		ft_parsing_cleaner(element, cmd->first, cmd);
 	}
 }

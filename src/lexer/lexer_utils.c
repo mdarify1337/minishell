@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   lexer_utils.c                                      :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: mdarify <mdarify@student.42.fr>            +#+  +:+       +#+        */
+/*   By: mmounaji <mmounaji@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/02/05 18:08:56 by mmounaji          #+#    #+#             */
-/*   Updated: 2023/03/16 12:03:58 by mdarify          ###   ########.fr       */
+/*   Updated: 2023/03/17 21:20:55 by mmounaji         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -23,7 +23,8 @@ int	get_word(t_list *tokens, char *str, enum e_state state)
 	return (i);
 }
 
-void	quotes_state(t_list *tokens, char *str, enum e_state *state, enum e_token state2)
+void	quotes_state(t_list *tokens, char *str, enum e_state *state, \
+enum e_token state2)
 {
 	enum e_state	e_state;
 	enum e_token	e_type;
@@ -52,7 +53,7 @@ void	quotes_state(t_list *tokens, char *str, enum e_state *state, enum e_token s
 		ft_lstadd_back(&tokens, ft_lstnew(str, 1, e_type, *state));
 }
 
-int	tokenize_redir(t_list *tokens, char *str, int i, enum e_state *state)
+int	tokenize_redir(t_list *tokens, char *str, int i, enum e_state state)
 {
 	int	j;
 
@@ -60,17 +61,19 @@ int	tokenize_redir(t_list *tokens, char *str, int i, enum e_state *state)
 	if (str[i] == '<')
 	{
 		if (str[i + 1] == '<')
-			ft_lstadd_back(&tokens, ft_lstnew(str + (i++), 2, HERE_DOC, *state));
+			ft_lstadd_back(&tokens, ft_lstnew(str + (i++), \
+			2, HERE_DOC, state));
 		else
-			ft_lstadd_back(&tokens, ft_lstnew(str + i, 1, REDIR_IN, *state));
+			ft_lstadd_back(&tokens, ft_lstnew(str + i, 1, REDIR_IN, state));
 		i++;
 	}
 	else if (str[i] == '>')
 	{
 		if (str[i + 1] == '>')
-			ft_lstadd_back(&tokens, ft_lstnew(str + (i++), 2, DREDIR_OUT, *state));
+			ft_lstadd_back(&tokens, ft_lstnew(str + (i++), 2, \
+			DREDIR_OUT, state));
 		else
-			ft_lstadd_back(&tokens, ft_lstnew(str + i, 1, REDIR_OUT, *state));
+			ft_lstadd_back(&tokens, ft_lstnew(str + i, 1, REDIR_OUT, state));
 		i++;
 	}
 	return (i - j);
@@ -84,7 +87,8 @@ int	get_env_var(t_list *tokens, char *str, enum e_state state)
 	if (str[i] == '?' || (str[i] >= '0' && str[i] <= '9'))
 		i++;
 	else
-		while ((str[i] == '_' || is_alphanum(str[i]) == 1) && str[i] != '\n' && str[i] != '\0')
+		while ((str[i] == '_' || is_alphanum(str[i]) == 1) \
+		&& str[i] != '\n' && str[i] != '\0')
 			i++;
 	ft_lstadd_back(&tokens, ft_lstnew(str, i, ENV, state));
 	return (i);

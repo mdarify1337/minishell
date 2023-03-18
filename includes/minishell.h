@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   minishell.h                                        :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: mdarify <mdarify@student.42.fr>            +#+  +:+       +#+        */
+/*   By: mmounaji <mmounaji@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/02/01 19:10:22 by mmounaji          #+#    #+#             */
-/*   Updated: 2023/03/17 10:22:54 by mdarify          ###   ########.fr       */
+/*   Updated: 2023/03/17 21:07:39 by mmounaji         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -123,7 +123,7 @@ t_list					*init_tokens(t_list *list);
 int						get_word(t_list *tokens, char *str, enum e_state state);
 t_element				*ft_lstnew(char *content, int len, enum e_token type,
 							enum e_state state);
-t_list					*lexer(char *line);
+t_list					*lexer(char *line, int i);
 char					**ft_split(char const *s, char c);
 void					ft_lstadd_back(t_list **list, t_element *new);
 int						in_charset(char c);
@@ -138,10 +138,11 @@ void					quotes_state(t_list *tokens, char *str,
 							enum e_state *state, enum e_token state2);
 int						ft_readline(char **line);
 int						tokenize_redir(t_list *tokens, char *str, int i,
-							enum e_state *state);
+							enum e_state state);
 int						get_env_var(t_list *tokens, char *str,
 							enum e_state state);
 int						is_alphanum(int c);
+t_cmd_node				*cmd_new(void);
 void					main_program(t_command *node, t_env *env);
 void					ft_expand(t_list **lst, t_env *env);
 int						check_syntax(t_list *lst);
@@ -162,7 +163,7 @@ t_env_node				*search_by_key(t_env_node *head, char *key);
 int						unset_cmd(t_env *env, char *key);
 t_command				*parse_command(t_list **list);
 char					*ft_strjoin_free2(char *s1, char *s2);
-void					export_cmd(t_env *env, char *arg);
+void					export_cmd(t_env *env, char *arg, int i);
 char					*ft_realloc(char *old, char *new, t_element *next);
 void					ft_cmdadd_back(t_command **list, t_cmd_node *new);
 void					update_redirection(t_cmd_node *cmd, t_element *elm);
@@ -182,8 +183,6 @@ char					**convert_array(t_env *env);
 void					ft_env_cleaner(t_env_node *lst);
 void					env_free(t_env_node *lst);
 void					ft_lexer_cleaner(t_list *lst);
-void					ft_parsing_cleaner(t_list *lst, t_cmd_node *node,
-							t_env *env);
 char					*ft_strndup(char *s1, int n);
 // MINISHELL: ------->execution
 void					ft_check(int fd, char *filename, int flag);
@@ -227,5 +226,5 @@ int						fcheck_execv_builtin(t_cmd_node *info, t_env *env);
 void					ft_putstr_fd(char *s, int fd);
 void					fprint_ecode(char *s, int fd, int fxcode);
 void					ft_parsing_cleaner(t_list *lst, t_cmd_node *node,
-							t_env *env);
+							t_command *cmd);
 #endif

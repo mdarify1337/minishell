@@ -3,21 +3,24 @@
 /*                                                        :::      ::::::::   */
 /*   env.c                                              :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: mdarify <mdarify@student.42.fr>            +#+  +:+       +#+        */
+/*   By: mmounaji <mmounaji@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/02/12 13:55:59 by mmounaji          #+#    #+#             */
-/*   Updated: 2023/03/16 11:57:43 by mdarify          ###   ########.fr       */
+/*   Updated: 2023/03/17 21:39:58 by mmounaji         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "../../includes/minishell.h"
 
-void	key_error(char	*env)
+t_env_node	*key_error(char	*env, char *s1, char *s2)
 {
+	free(s1);
+	free(s2);
 	ft_putstr_fd("export: ", 2);
 	ft_putstr_fd(env, 2);
 	ft_putstr_fd(": not a valid identifier\n", 2);
 	g_fcode.exit_status = 1;
+	return (NULL);
 }
 
 t_env_node	*env_new(char *env)
@@ -42,7 +45,7 @@ t_env_node	*env_new(char *env)
 			return (NULL);
 	}
 	if (!check_key(key))
-		key_error(env);
+		return (key_error(env, key, value));
 	lst->key = key;
 	lst->value = value;
 	return (lst);

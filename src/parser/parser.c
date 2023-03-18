@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   parser.c                                           :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: mdarify <mdarify@student.42.fr>            +#+  +:+       +#+        */
+/*   By: mmounaji <mmounaji@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/02/15 17:56:49 by mmounaji          #+#    #+#             */
-/*   Updated: 2023/03/17 10:26:13 by mdarify          ###   ########.fr       */
+/*   Updated: 2023/03/17 22:27:18 by mmounaji         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -53,6 +53,32 @@ void	ft_split_args(t_cmd_node **args)
 	}
 }
 
+void	parse_coman2(t_element **elm, t_cmd_node **tmp, t_command **cmd)
+{
+	if ((*elm)->type == PIPE_LINE && (*elm)->state == GENERAL)
+	{
+		ft_cmdadd_back(cmd, (*tmp));
+		(*tmp) = cmd_new();
+	}
+	else if (((*elm)->type != QOUTE && (*elm)->type != DOUBLE_QUOTE \
+	&& (*elm)->type != GEN_WS) \
+	|| ((*elm)->state == IN_DQUOTE || (*elm)->state == IN_QUOTE))
+	{
+		if ((*elm)->next && (*elm)->next->type != GEN_WS)
+		{	
+			while ((*elm) && (*elm)->type != QOUTE && \
+			(*elm)->type != DOUBLE_QUOTE && (*elm)->type != GEN_WS)
+			{
+				(*tmp)->args = ft_strjoin_free((*tmp)->args, (*elm)->content);
+				(*elm) = (*elm)->next;
+			}
+		}
+		else
+			(*tmp)->args = ft_realloc((*tmp)->args, \
+			(*elm)->content, (*elm)->next);
+	}
+}
+
 t_command	*parse_command(t_list **list)
 {
 	t_command		*cmd;
@@ -72,27 +98,8 @@ t_command	*parse_command(t_list **list)
 			while (elm && elm->type != WORD && elm->type != ENV)
 				elm = elm->next;
 		}
-		else if (elm->type == PIPE_LINE && elm->state == GENERAL)
-		{
-			ft_cmdadd_back(&cmd, tmp);
-			tmp = cmd_new();
-		}
-		else if ((elm->type != QOUTE && elm->type != DOUBLE_QUOTE
-				&& elm->type != GEN_WS)
-			|| (elm->state == IN_DQUOTE || elm->state == IN_QUOTE))
-		{
-			if (elm->next && elm->next->type != GEN_WS)
-			{	
-				while (elm && elm->type != QOUTE && elm->type != DOUBLE_QUOTE
-					&& elm->type != GEN_WS)
-				{
-					tmp->args = ft_strjoin_free(tmp->args, elm->content);
-					elm = elm->next;
-				}
-			}
-			else
-				tmp->args = ft_realloc(tmp->args, elm->content, elm->next);
-		}
+		else
+			parse_coman2(&elm, &tmp, &cmd);
 		if (elm)
 			elm = elm->next;
 	}

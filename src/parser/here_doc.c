@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   here_doc.c                                         :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: mdarify <mdarify@student.42.fr>            +#+  +:+       +#+        */
+/*   By: mmounaji <mmounaji@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/02/27 19:51:51 by mmounaji          #+#    #+#             */
-/*   Updated: 2023/03/17 11:04:04 by mdarify          ###   ########.fr       */
+/*   Updated: 2023/03/17 17:58:55 by mmounaji         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -17,10 +17,12 @@ char	*ft_assign_fname(int length)
 	int		fd;
 	int		t;
 	char	*fname;
-	int a = 0;
+	int		a;
 
+	a = 0;
 	fname = malloc(sizeof(char) * 15);
-	if ((fd = open("/dev/random", O_RDONLY)) == -1)
+	fd = open("/dev/random", O_RDONLY);
+	if (fd == -1)
 		return (NULL);
 	while (length)
 	{
@@ -44,6 +46,7 @@ void	sig_child(int status)
 void	here_doc_exec(int fd, t_element *node, int len)
 {
 	char	*buf;
+	char	*tmp;
 
 	signal(SIGINT, &sig_child);
 	signal(SIGQUIT, SIG_IGN);
@@ -55,8 +58,9 @@ void	here_doc_exec(int fd, t_element *node, int len)
 		if (!ft_strncmp(buf, node->content, len) && \
 		ft_strlen(buf) == (size_t)len)
 			break ;
-		write(fd, ft_strjoin(buf, "\n"), ft_strlen(buf) + 1);
-		free(buf);
+		tmp = ft_strjoin_free(buf, "\n");
+		write(fd, tmp, ft_strlen(tmp));
+		free(tmp);
 	}
 	close(fd);
 	free(buf);
@@ -99,7 +103,8 @@ int	execute_here_doc(t_list **list)
 	{
 		if (node->type == HERE_DOC && node->next->type != PIPE_LINE)
 		{
-			while (node && node->type != WORD && node->type != ENV && node->type != WHITE_SPACE)
+			while (node && node->type != WORD && node->type != ENV \
+			&& node->type != WHITE_SPACE)
 				node = node->next;
 			if (here_doc(node) == 0)
 			{

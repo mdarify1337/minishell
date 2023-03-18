@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   parsing_cleaner.c                                  :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: mdarify <mdarify@student.42.fr>            +#+  +:+       +#+        */
+/*   By: mmounaji <mmounaji@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/03/03 14:25:44 by mmounaji          #+#    #+#             */
-/*   Updated: 2023/03/16 11:53:28 by mdarify          ###   ########.fr       */
+/*   Updated: 2023/03/17 20:35:02 by mmounaji         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -77,9 +77,9 @@ void	ft_cmd_cleaner(t_cmd_node **cmd)
 	}
 }
 
-void	ft_parsing_cleaner(t_list *lst, t_cmd_node *node, t_env *env)
+void	ft_parsing_cleaner(t_list *lst, t_cmd_node *node, t_command	*cmd)
 {
-	(void)env;
 	ft_cmd_cleaner(&node);
 	ft_lexer_cleaner(lst);
+	free(cmd);
 }

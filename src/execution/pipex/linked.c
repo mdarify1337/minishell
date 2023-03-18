@@ -6,7 +6,7 @@
 /*   By: mmounaji <mmounaji@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/03/02 13:26:55 by mdarify           #+#    #+#             */
-/*   Updated: 2023/03/16 21:09:07 by mmounaji         ###   ########.fr       */
+/*   Updated: 2023/03/17 15:10:24 by mmounaji         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -53,7 +53,7 @@ char	*check_command2(char *cmd, t_env *env)
 	t_env_node	*pwd;
 	char		*command;
 
-	pwd = search_by_key(env->first, "PWD");
+	pwd = search_by_key(env->first, ft_strdup("PWD"));
 	command = st_join(pwd->value, '/', cmd);
 	if (access(command, X_OK) == 0)
 		return (command);
@@ -98,7 +98,7 @@ int	find_path(t_cmd_node **cmd, t_env *env)
 	t_env_node	*node;
 	char		*abs_path;
 
-	node = search_by_key(env->first, "PATH");
+	node = search_by_key(env->first, ft_strdup("PATH"));
 	if (!node)
 		return (0);
 	abs_path = get_cmd(ft_split(node->value, ':'), (*cmd)->args, env);

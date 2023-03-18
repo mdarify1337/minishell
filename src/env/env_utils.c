@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   env_utils.c                                        :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: mdarify <mdarify@student.42.fr>            +#+  +:+       +#+        */
+/*   By: mmounaji <mmounaji@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/02/12 13:56:09 by mmounaji          #+#    #+#             */
-/*   Updated: 2023/03/15 16:57:41 by mdarify          ###   ########.fr       */
+/*   Updated: 2023/03/17 11:43:37 by mmounaji         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -23,7 +23,7 @@ int	check_key(char *key)
 {
 	while (*key)
 	{
-		if (!is_alphanum(*key) && *key != '_')
+		if (!ft_is_alpha(*key))
 			return (0);
 		key++;
 	}

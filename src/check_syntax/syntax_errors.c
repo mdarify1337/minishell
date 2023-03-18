@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   syntax_errors.c                                    :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: mdarify <mdarify@student.42.fr>            +#+  +:+       +#+        */
+/*   By: mmounaji <mmounaji@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/02/09 12:55:04 by mmounaji          #+#    #+#             */
-/*   Updated: 2023/03/16 16:46:20 by mdarify          ###   ########.fr       */
+/*   Updated: 2023/03/17 21:39:22 by mmounaji         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -20,18 +20,6 @@ int	is_redirection(t_element *elm)
 	elm->type == HERE_DOC || elm->type == DREDIR_OUT)
 		return (1);
 	return (0);
-}
-
-t_element	*skip_space(t_element *elm, int flag)
-{
-	while (elm != NULL && (elm->type == WHITE_SPACE || elm->type == GEN_WS))
-	{
-		if (flag == 1)
-			elm = elm->next;
-		else
-			elm = elm->previous;
-	}
-	return (elm);
 }
 
 int	check_pipe(t_element *elm)
@@ -60,6 +48,28 @@ int	redir_error(t_element *elm)
 	return (0);
 }
 
+int	main_check(t_element *elem)
+{
+	while (elem)
+	{
+		if (elem->type == PIPE_LINE && elem->state == GENERAL \
+			&& check_pipe(elem) == 0)
+		{
+			ft_putstr_fd("minishell: syntax error near unexpected token |\n", 2);
+			g_fcode.exit_status = 258;
+			return (0);
+		}	
+		else if (is_redirection(elem) == 1 && redir_error(elem) == 1)
+		{
+			ft_putstr_fd("minishell: syntax error near unexpected token >\n", 2);
+			g_fcode.exit_status = 1;
+			return (0);
+		}
+		elem = elem->next;
+	}
+	return (1);
+}
+
 int	check_syntax(t_list *lst)
 {
 	t_element	*elem;
@@ -67,23 +77,11 @@ int	check_syntax(t_list *lst)
 	elem = lst->first;
 	if (check_quotes(lst) == 0)
 	{
-		perror("minishell: detected unclosed quotes");
+		ft_putstr_fd("minishell: detected unclosed quotes", 2);
 		g_fcode.exit_status = 0;
+		return (0);
 	}	
-	while (elem)
-	{
-		if (elem->type == PIPE_LINE && elem->state == GENERAL \
-			&& check_pipe(elem) == 0)
-		{
-			perror("minishell: syntax error near unexpected token |");
-			g_fcode.exit_status = 258;
-		}	
-		else if (is_redirection(elem) == 1 && redir_error(elem) == 1)
-		{
-			perror("minishell: syntax error near unexpected token >");
-			g_fcode.exit_status = 1;
-		}
-		elem = elem->next;
-	}
-	return (0);
+	if (main_check(elem) == 0)
+		return (0);
+	return (1);
 }

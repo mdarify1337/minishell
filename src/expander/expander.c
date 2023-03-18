@@ -6,7 +6,7 @@
 /*   By: mmounaji <mmounaji@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/02/21 20:40:25 by mmounaji          #+#    #+#             */
-/*   Updated: 2023/02/24 14:42:21 by mmounaji         ###   ########.fr       */
+/*   Updated: 2023/03/17 16:40:08 by mmounaji         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -22,7 +22,8 @@ void	ft_expand(t_list **lst, t_env *env)
 	{
 		if (element->type == ENV && element->state != IN_QUOTE)
 		{
-			str = (search_by_key(env->first, (element->content) + 1));
+			str = (search_by_key(env->first, \
+			ft_strdup((element->content) + 1)));
 			if (str != NULL)
 			{
 				free(element->content);
